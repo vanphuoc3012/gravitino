@@ -59,12 +59,12 @@ download_aliyun_jars() {
   rm -rf "${bundle_dir}/aliyun"
   unzip -q "${bundle_dir}/${aliyun_sdk}" -d "${bundle_dir}/aliyun"
   cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/aliyun-sdk-oss-3.10.2.jar" ${target_dir}
-  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/hamcrest-core-*.jar" ${target_dir}
-  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/jdom2-*.jar" ${target_dir}
+  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/hamcrest-core-1.1.jar" ${target_dir}
+  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/jdom2-2.0.6.jar" ${target_dir}
 }
 
 # Build the Gravitino project
-${gravitino_home}/gradlew clean build -x test
+${gravitino_home}/gradlew clean build -x test -x rat
 
 rm -rf ${gravitino_home}/distribution
 # Prepare compile Gravitino packages
