@@ -39,7 +39,7 @@ cd ${gravitino_home}
 ./gradlew :bundles:aws:jar
 ./gradlew :bundles:azure:jar
 ## Iceberg doesn't provide Iceberg Aliyun bundle jar, so use Gravitino aliyun bundle to provide OSS packages.
-./gradlew :bundles:aliyun-bundle:jar
+./gradlew :bundles:aliyun:jar
 
 # prepare bundle jar
 cd ${iceberg_rest_server_dir}
@@ -47,7 +47,7 @@ mkdir -p bundles
 find ${gravitino_home}/bundles/gcp/build/libs/ -name 'gravitino-gcp-*.jar' ! -name '*-empty.jar' -exec cp -v {} bundles/ \;
 find ${gravitino_home}/bundles/aws/build/libs/ -name 'gravitino-aws-*.jar' ! -name '*-empty.jar' -exec cp -v {} bundles/ \;
 find ${gravitino_home}/bundles/azure/build/libs/ -name 'gravitino-azure-*.jar' ! -name '*-empty.jar' -exec cp -v {} bundles/ \;
-find ${gravitino_home}/bundles/aliyun-bundle/build/libs/ -name 'gravitino-aliyun-bundle-*.jar' ! -name '*-empty.jar' -exec cp -v {} bundles/ \;
+find ${gravitino_home}/bundles/aliyun/build/libs/ -name 'gravitino-aliyun-*.jar' ! -name '*-empty.jar' -exec cp -v {} bundles/ \;
 
 iceberg_version="1.9.2"
 
@@ -66,10 +66,23 @@ if [ ! -f "bundles/${iceberg_azure_bundle}" ]; then
   curl -L -s -o bundles/${iceberg_azure_bundle} https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-azure-bundle/${iceberg_version}/${iceberg_azure_bundle}
 fi
 
+aliyun_sdk_version="3.10.2"
+aliyun_sdk="aliyun_java_sdk_${aliyun_sdk_version}.zip"
+if [ ! -f "bundles/${aliyun_sdk}" ]; then
+  curl -L -s -o bundles/${aliyun_sdk} https://gosspublic.alicdn.com/sdks/java/${aliyun_sdk}
+fi
+rm -rf bundles/aliyun
+unzip -q "bundles/${aliyun_sdk}" -d "bundles/aliyun"
+
 # download jdbc driver
-curl -L -s -o bundles/sqlite-jdbc-3.42.0.0.jar https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.42.0.0/sqlite-jdbc-3.42.0.0.jar
+if [ ! -f "bundles/sqlite-jdbc-3.42.0.0.jar" ]; then
+  curl -L -s -o bundles/sqlite-jdbc-3.42.0.0.jar https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.42.0.0/sqlite-jdbc-3.42.0.0.jar
+fi
 
 cp bundles/*jar ${iceberg_rest_server_dir}/packages/gravitino-iceberg-rest-server/libs/
+cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/aliyun-sdk-oss-3.10.2.jar ${iceberg_rest_server_dir}/packages/gravitino-iceberg-rest-server/libs/
+cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/hamcrest-core-*.jar ${iceberg_rest_server_dir}/packages/gravitino-iceberg-rest-server/libs/
+cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/jdom2-*.jar ${iceberg_rest_server_dir}/packages/gravitino-iceberg-rest-server/libs/
 
 # Temporary rm log4j from Gravition to prevent class conflict with Iceberg AWS bundle jar
 rm -f ${iceberg_rest_server_dir}/packages/gravitino-iceberg-rest-server/libs/log4j-api-*.jar
