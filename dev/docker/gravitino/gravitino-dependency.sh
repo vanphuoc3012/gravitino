@@ -51,15 +51,16 @@ download_gcs_connector() {
 download_aliyun_jars() {
   local aliyun_sdk_version="3.10.2"
   local aliyun_sdk="aliyun_java_sdk_${aliyun_sdk_version}.zip"
-  local target_dir="${1}"
-  if [ ! -f "bundles/${aliyun_sdk}" ]; then
-    curl -L -s -o bundles/${aliyun_sdk} https://gosspublic.alicdn.com/sdks/java/${aliyun_sdk}
+  local bundle_dir="${1}"
+  local target_dir="${2}"
+  if [ ! -f "${bundle_dir}/${aliyun_sdk}" ]; then
+    curl -L -s -o "${bundle_dir}/${aliyun_sdk}" https://gosspublic.alicdn.com/sdks/java/${aliyun_sdk}
   fi
-  rm -rf bundles/aliyun
-  unzip -q "bundles/${aliyun_sdk}" -d "bundles/aliyun"
-  cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/aliyun-sdk-oss-3.10.2.jar ${target_dir}
-  cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/hamcrest-core-*.jar ${target_dir}
-  cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/jdom2-*.jar ${target_dir}
+  rm -rf "${bundle_dir}/aliyun"
+  unzip -q "${bundle_dir}/${aliyun_sdk}" -d "${bundle_dir}/aliyun"
+  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/aliyun-sdk-oss-3.10.2.jar" ${target_dir}
+  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/hamcrest-core-*.jar" ${target_dir}
+  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/jdom2-*.jar" ${target_dir}
 }
 
 # Build the Gravitino project
@@ -107,7 +108,7 @@ iceberg_azure_bundle="iceberg-azure-bundle-${iceberg_version}.jar"
 wget "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-azure-bundle/${iceberg_version}/${iceberg_azure_bundle}" -O "${gravitino_staging_dir}/${iceberg_azure_bundle}"
 cp "${gravitino_staging_dir}/${iceberg_azure_bundle}" "${gravitino_iceberg_rest_dir}"
 
-download_aliyun_jars "${gravitino_iceberg_rest_dir}"
+download_aliyun_jars "${gravitino_staging_dir}" "${gravitino_iceberg_rest_dir}"
 
 echo "Finish downloading"
 

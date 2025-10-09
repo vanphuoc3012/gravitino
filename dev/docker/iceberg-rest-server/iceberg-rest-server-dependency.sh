@@ -25,15 +25,16 @@ gravitino_home="$(cd "${iceberg_rest_server_dir}/../../..">/dev/null; pwd)"
 download_aliyun_jars() {
   local aliyun_sdk_version="3.10.2"
   local aliyun_sdk="aliyun_java_sdk_${aliyun_sdk_version}.zip"
-  local target_dir="${1}"
-  if [ ! -f "bundles/${aliyun_sdk}" ]; then
-    curl -L -s -o bundles/${aliyun_sdk} https://gosspublic.alicdn.com/sdks/java/${aliyun_sdk}
+  local bundle_dir="${1}"
+  local target_dir="${2}"
+  if [ ! -f "${bundle_dir}/${aliyun_sdk}" ]; then
+    curl -L -s -o "${bundle_dir}/${aliyun_sdk}" https://gosspublic.alicdn.com/sdks/java/${aliyun_sdk}
   fi
-  rm -rf bundles/aliyun
-  unzip -q "bundles/${aliyun_sdk}" -d "bundles/aliyun"
-  cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/aliyun-sdk-oss-3.10.2.jar ${target_dir}
-  cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/hamcrest-core-*.jar ${target_dir}
-  cp bundles/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/jdom2-*.jar ${target_dir}
+  rm -rf "${bundle_dir}/aliyun"
+  unzip -q "${bundle_dir}/${aliyun_sdk}" -d "${bundle_dir}/aliyun"
+  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/aliyun-sdk-oss-3.10.2.jar" ${target_dir}
+  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/hamcrest-core-*.jar" ${target_dir}
+  cp "${bundle_dir}/aliyun/aliyun_java_sdk_${aliyun_sdk_version}/lib/jdom2-*.jar" ${target_dir}
 }
 
 # Prepare the Iceberg REST server packages
@@ -80,7 +81,7 @@ if [ ! -f "bundles/${iceberg_azure_bundle}" ]; then
   curl -L -s -o bundles/${iceberg_azure_bundle} https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-azure-bundle/${iceberg_version}/${iceberg_azure_bundle}
 fi
 
-download_aliyun_jars  ${iceberg_rest_server_dir}/packages/gravitino-iceberg-rest-server/libs/
+download_aliyun_jars "bundles" "${iceberg_rest_server_dir}/packages/gravitino-iceberg-rest-server/libs/"
 
 # download jdbc driver
 if [ ! -f "bundles/sqlite-jdbc-3.42.0.0.jar" ]; then
