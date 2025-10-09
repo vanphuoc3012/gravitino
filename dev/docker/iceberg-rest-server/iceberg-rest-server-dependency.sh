@@ -53,7 +53,6 @@ cd ${gravitino_home}
 ./gradlew :bundles:gcp:jar
 ./gradlew :bundles:aws:jar
 ./gradlew :bundles:azure:jar
-## Iceberg doesn't provide Iceberg Aliyun bundle jar, so use Gravitino aliyun bundle to provide OSS packages.
 ./gradlew :bundles:aliyun:jar
 
 # prepare bundle jar
